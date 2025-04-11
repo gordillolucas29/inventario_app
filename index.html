@@ -10,21 +10,14 @@
 		.input-celda {
 			width: 60px;
 			text-align: center;
+			min-width: 60px;
+			padding: 0.3rem 0.5rem;
+			font-size: 0.875rem;
 		}
 
 		.seriales {
 			font-size: 0.85rem;
 			color: #6c757d;
-		}
-
-		body.bg-dark .btn-outline-secondary {
-			color: #f8f9fa;
-			border-color: #f8f9fa;
-		}
-
-		body.bg-dark .btn-outline-secondary:hover {
-			background-color: #f8f9fa;
-			color: #212529;
 		}
 	</style>
 </head>
@@ -32,10 +25,6 @@
 <body class="p-3">
 	<div class="container">
 		<h3 class="text-center mb-4">📦 Inventario HFC (Modular)</h3>
-		<div class="d-flex justify-content-end align-items-center mb-3 gap-5 form-switch ">
-			<label class="form-check-label" for="toggleNoche">🌙 Modo noche</label>
-			<input class="form-check-input" type="checkbox" id="toggleNoche">
-		</div>
 
 		<div class="mb-3">
 			<button class="btn btn-outline-secondary w-100" data-bs-toggle="collapse" data-bs-target="#ayuda">
@@ -84,9 +73,18 @@
 			<button id="procesarJsonBtn" class="btn btn-success w-100">3️⃣ Procesar Inventario</button>
 
 
+
 		</div>
 
+
+		<div id="filtroFaltantesWrapper" class="text-center mt-2 d-none">
+			<button id="btnFaltantes" class="btn btn-outline-secondary">
+				🔎 Ver solo faltantes
+			</button>
+		</div>
 		<div id="tablaMateriales" class="table-responsive d-none mt-4">
+
+
 			<table class="table align-middle text-center">
 				<thead class="table-light">
 					<tr>

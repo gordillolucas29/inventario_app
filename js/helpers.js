@@ -1,10 +1,11 @@
 // helpers.js - funciones auxiliares
 
 export function getRowClass(diff) {
-	if (diff < 0) return 'table-danger';
-	if (diff > 0) return 'table-success';
-	return 'table-light';
+	if (diff === 0) return 'table-success';     // coinciden
+	if (diff < 0) return 'table-danger';        // falta
+	return 'table-light';                       // sobra o neutro
 }
+
 
 export function guardarProgreso(nombre, cantidad) {
 	const progreso = JSON.parse(localStorage.getItem("progreso_inventario") || "{}");

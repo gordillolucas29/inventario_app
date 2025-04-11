@@ -33,9 +33,12 @@ export function iniciarDesdeTextarea() {
 
 	const data = JSON.parse(texto);
 	procesarInventario(data);
+	document.getElementById("filtroFaltantesWrapper").classList.remove("d-none");
 }
 
 export function iniciarDesdeLocalStorage() {
 	const data = obtenerJson();
 	if (Array.isArray(data)) procesarInventario(data);
+	document.getElementById("filtroFaltantesWrapper").classList.remove("d-none");
+
 }

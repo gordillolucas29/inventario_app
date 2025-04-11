@@ -17,17 +17,30 @@ export function crearToast(mensaje, tipo = 'info') {
 
 
 export function crearControlesCantidad(input, cantidadApi, row, diffCell, nombre) {
-	const container = document.createElement("div");
-	container.className = "d-flex gap-1 justify-content-center align-items-center";
+	const group = document.createElement("div");
+	group.className = "input-group justify-content-center flex-nowrap";
 
 	const menos = document.createElement("button");
-	menos.className = "btn btn-outline-secondary btn-sm minus";
-	menos.textContent = "-";
+	menos.className = "btn btn-outline-dark";
+	menos.textContent = "−";
 
 	const mas = document.createElement("button");
-	mas.className = "btn btn-outline-secondary btn-sm plus";
+	mas.className = "btn btn-outline-dark";
 	mas.textContent = "+";
 
+	const completar = document.createElement("button");
+	completar.className = "btn btn-outline-success";
+	completar.innerHTML = "🟰";
+
+	// Aplicar estilo al input
+	input.type = "number";
+	input.classList.add("form-control", "text-center", "input-celda");
+	input.style.width = "60px";
+	input.style.minWidth = "60px";
+	input.style.maxWidth = "80px";
+	input.style.flex = "0 0 auto"; // ¡esto evita que se estire!
+
+	// Eventos
 	menos.onclick = () => {
 		input.value = Math.max(0, parseInt(input.value) - 1);
 		actualizarDiferencia(input, cantidadApi, row, diffCell, nombre);
@@ -38,25 +51,30 @@ export function crearControlesCantidad(input, cantidadApi, row, diffCell, nombre
 		actualizarDiferencia(input, cantidadApi, row, diffCell, nombre);
 	};
 
+	completar.onclick = () => {
+		input.value = cantidadApi;
+		actualizarDiferencia(input, cantidadApi, row, diffCell, nombre);
+	};
 
-	container.appendChild(menos);
-	container.appendChild(input);
-	container.appendChild(mas);
+	group.appendChild(completar);
+	group.appendChild(input);
+	group.appendChild(menos);
+	group.appendChild(mas);
 
-	return container;
+	return group;
 }
 
 export function actualizarDiferencia(input, cantidadApi, row, cell, nombre) {
 	const diff = parseInt(input.value || 0) - parseInt(cantidadApi);
 	cell.textContent = diff;
 
-	input.dataset.tocado = "1"; // marcar que el usuario tocó este input
-
+	input.dataset.tocado = "1";
 	if (input.dataset.tocado === "1") {
 		row.className = `table ${getRowClass(diff)}`;
 	} else {
 		row.className = `table`;
 	}
+
 
 	guardarProgreso(nombre, parseInt(input.value));
 }
@@ -89,9 +107,18 @@ export function crearFila(material) {
 		: "-";
 
 	tdInput.appendChild(crearControlesCantidad(input, material.cantidad, row, tdDiff, nombre));
+
 	const diffInicial = parseInt(input.value || 0) - parseInt(material.cantidad);
 	tdDiff.textContent = diffInicial;
-	row.className = `table`; // sin color al cargar
+
+	// Restaurar color si ya se había tocado ese campo
+	if (input.value !== "0" && input.value !== "") {
+		input.dataset.tocado = "1";
+		row.className = `table ${getRowClass(diffInicial)}`;
+	} else {
+		row.className = `table`;
+	}
+
 
 	row.appendChild(tdNombre);
 	row.appendChild(tdApi);

@@ -12,6 +12,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	/// Lógica reset de la tabla
 	const confirmarReset = document.getElementById("confirmarReset");
 	if (confirmarReset) {
 		confirmarReset.addEventListener("click", () => {
@@ -20,18 +21,20 @@ window.addEventListener("DOMContentLoaded", () => {
 			document.getElementById("jsonTextarea").value = "";
 			document.getElementById("materialBody").innerHTML = "";
 			document.getElementById("tablaMateriales").classList.add("d-none");
-			// Volver a mostrar alerta
+			// Alerta confirmación reset
 			const alerta = document.getElementById("alertaInicial");
 			if (alerta) alerta.classList.remove("d-none");
+			document.getElementById("filtroFaltantesWrapper").classList.add("d-none");
+
 		});
 	}
-
 
 	const procesarBtn = document.getElementById("procesarJsonBtn");
 	if (procesarBtn) {
 		procesarBtn.addEventListener("click", iniciarDesdeTextarea);
 	}
 
+	// Genera link de la api con el ID insertado
 	const idBtn = document.getElementById("generarLinkBtn");
 	if (idBtn) {
 		idBtn.addEventListener("click", () => {
@@ -45,9 +48,51 @@ window.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	// Lógica elementos faltantes (Diferencia <= 0 )
+	const toggleFaltantes = document.getElementById("toggleFaltantes");
+	if (toggleFaltantes) {
+		toggleFaltantes.addEventListener("change", () => {
+			const mostrarSoloFaltantes = toggleFaltantes.checked;
+			document.querySelectorAll("#materialBody tr").forEach(row => {
+				const diff = parseInt(row.children[3]?.textContent || "0");
+				if (mostrarSoloFaltantes && diff >= 0) {
+					row.classList.add("d-none");
+				} else {
+					row.classList.remove("d-none");
+				}
+			});
+		});
+	}
+
+	// Botón para mostrar solo elementos faltantes (diferencia <= 0)
+	let mostrandoSoloFaltantes = false;
+
+	const btnFaltantes = document.getElementById("btnFaltantes");
+	if (btnFaltantes) {
+		btnFaltantes.addEventListener("click", () => {
+			mostrandoSoloFaltantes = !mostrandoSoloFaltantes;
+
+			document.querySelectorAll("#materialBody tr").forEach(row => {
+				const diff = parseInt(row.children[3]?.textContent || "0");
+				if (mostrandoSoloFaltantes && diff >= 0) {
+					row.classList.add("d-none");
+				} else {
+					row.classList.remove("d-none");
+				}
+			});
+
+			btnFaltantes.textContent = mostrandoSoloFaltantes
+				? "🔄 Ver todos"
+				: "🔎 Ver solo faltantes";
+			btnFaltantes.classList.toggle("btn-outline-warning", mostrandoSoloFaltantes);
+			btnFaltantes.classList.toggle("btn-outline-secondary", !mostrandoSoloFaltantes);
+		});
+	}
+	// Inicia los tooltips
 	const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 	tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
 
+	// Función para exportar tabla (A mejorar)
 	const exportarCSV = document.getElementById("btnExportarCSV");
 	if (exportarCSV) {
 		exportarCSV.addEventListener("click", () => {
@@ -93,35 +138,5 @@ window.addEventListener("DOMContentLoaded", () => {
 			URL.revokeObjectURL(url);
 		});
 	}
-	const body = document.body;
-	const toggle = document.getElementById("toggleNoche");
-
-	function aplicarModoNoche(activo) {
-		if (activo) {
-			body.classList.add("bg-dark", "text-light");
-			document.querySelectorAll(".table").forEach(t => t.classList.add("table-dark"));
-		} else {
-			body.classList.remove("bg-dark", "text-light");
-			document.querySelectorAll(".table").forEach(t => t.classList.remove("table-dark"));
-		}
-		document.querySelectorAll(".modal-content").forEach(modal => {
-			if (activo) {
-				modal.classList.add("bg-dark", "text-white");
-			} else {
-				modal.classList.remove("bg-dark", "text-white");
-			}
-		});
-
-	}
-
-	toggle.addEventListener("change", () => {
-		const activo = toggle.checked;
-		localStorage.setItem("modo_noche", activo ? "1" : "0");
-		aplicarModoNoche(activo);
-	});
 
 });
-// Aplicar modo noche al cargar si está activo
-const modoGuardado = localStorage.getItem("modo_noche") === "1";
-toggle.checked = modoGuardado;
-aplicarModoNoche(modoGuardado);
