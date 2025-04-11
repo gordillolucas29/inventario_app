@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Inventario HFC Modular</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+	<style>
+		.input-celda {
+			width: 60px;
+			text-align: center;
+		}
+
+		.seriales {
+			font-size: 0.85rem;
+			color: #6c757d;
+		}
+
+		body.bg-dark .btn-outline-secondary {
+			color: #f8f9fa;
+			border-color: #f8f9fa;
+		}
+
+		body.bg-dark .btn-outline-secondary:hover {
+			background-color: #f8f9fa;
+			color: #212529;
+		}
+	</style>
+</head>
+
+<body class="p-3">
+	<div class="container">
+		<h3 class="text-center mb-4">📦 Inventario HFC (Modular)</h3>
+		<div class="d-flex justify-content-end align-items-center mb-3 gap-5 form-switch ">
+			<label class="form-check-label" for="toggleNoche">🌙 Modo noche</label>
+			<input class="form-check-input" type="checkbox" id="toggleNoche">
+		</div>
+
+		<div class="mb-3">
+			<button class="btn btn-outline-secondary w-100" data-bs-toggle="collapse" data-bs-target="#ayuda">
+				❓ Cómo cargar el inventario
+			</button>
+		</div>
+		<div id="ayuda" class="collapse">
+			<div class="card card-body small">
+				<ol>
+					<li>Ingresá a <a href="http://inventario.panatelcomm.com" target="_blank">inventario.panatelcomm.com</a> y
+						logueate.</li>
+					<li>Andá a <strong>Nuevo Movimiento</strong> y buscá tu patente.</li>
+					<li>Al lado de la patente vas a ver el ID, por ejemplo: <code>ID.9321</code>.</li>
+					<li>Copiá solo el número <code>9321</code> y pegalo acá.</li>
+					<li>Hacé clic en el link, copiá todo el texto que aparece (es el JSON) y pegalo abajo.</li>
+				</ol>
+				<div class="alert alert-warning">Si no aparece el JSON, probablemente no iniciaste sesión o la ID está mal.
+				</div>
+			</div>
+		</div>
+
+		<div class="mb-3">
+			<label for="inventoryId" class="form-label">ID de Inventario</label>
+
+			<input id="inventoryId" type="text" class="form-control mb-2" placeholder="Ej: 9321" />
+			<button id="generarLinkBtn" class="btn btn-primary w-100">1️⃣ Obtener JSON</button>
+			<button id="btnReiniciar" class="btn btn-outline-danger w-100 mt-2">
+				🗑️ Reiniciar inventario
+			</button>
+		</div>
+
+		<div id="pasoJson" class="d-none">
+			<a id="apiLink" href="#" target="_blank" class="btn btn-outline-dark w-100 mb-2">Abrir JSON</a>
+			<div id="alertaInicial" class="alert alert-warning small" role="alert">
+				<p class="mb-0">
+					⚠️ Si realizaste una <strong>descarga</strong> o <strong>recupero</strong> en el inventario web,
+					<strong>copiá nuevamente el JSON actualizado</strong> desde el link del API.
+				</p>
+			</div>
+
+			<label for="jsonTextarea" class="form-label">2️⃣ Pegá el contenido aquí</label>
+
+
+			<textarea id="jsonTextarea" class="form-control mb-2" rows="6"
+				placeholder="Pegá el texto copiado del JSON..."></textarea>
+			<button id="procesarJsonBtn" class="btn btn-success w-100">3️⃣ Procesar Inventario</button>
+
+
+		</div>
+
+		<div id="tablaMateriales" class="table-responsive d-none mt-4">
+			<table class="table align-middle text-center">
+				<thead class="table-light">
+					<tr>
+						<th>Material</th>
+						<th>Inventario</th>
+						<th>Físico</th>
+						<th>Diferencia</th>
+						<th>Serial</th>
+					</tr>
+				</thead>
+				<tbody id="materialBody"></tbody>
+			</table>
+			<button id="btnExportarCSV" class="btn btn-outline-primary w-100 mt-2">
+				📤 Exportar diferencias a CSV
+			</button>
+
+		</div>
+	</div>
+
+	<!-- Toast de Bootstrap -->
+	<div class="toast-container position-fixed bottom-0 end-0 p-3">
+		<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<strong class="me-auto">Notificación</strong>
+				<small>Ahora</small>
+				<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+			</div>
+			<div class="toast-body" id="toast-body">
+				<!-- mensaje dinámico -->
+			</div>
+		</div>
+	</div>
+	<!-- Modal de confirmación para reiniciar -->
+	<div class="modal fade" id="confirmResetModal" tabindex="-1" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">¿Estás seguro?</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+				</div>
+				<div class="modal-body">
+					Esta acción eliminará el inventario actual y tu progreso. ¿Querés continuar?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="button" id="confirmarReset" class="btn btn-danger" data-bs-dismiss="modal">Sí,
+						reiniciar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
